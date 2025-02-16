@@ -95,8 +95,8 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
 
 
   # Carregar funções
-  source("forecastGDP/R/source_functions_final.R")
-  source("forecastGDP/R/source_prints_final.R")
+  source("source_functions_final.R")
+  source("source_prints_final.R")
 
   # Definir séries de resposta
   responses_series_level <- cbind(y_non_seasonal_ts, y_seasonal_adjusted_ts)
