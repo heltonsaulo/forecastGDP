@@ -1,0 +1,23 @@
+Package: forecastGDP
+Title: Pacote para previsão do PIB
+Version: 0.1.0
+Authors@R: person("Helton Saulo", email = "heltonsaulo@gmail.com", role = c("aut", "cre"))
+Description: Um pacote para previsão do PIB utilizando modelos estatísticos e aprendizado de máquina.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports:
+    dplyr,
+    forecast,
+    glmnet,
+    caret,
+    nnfor,
+    WaveletArima,
+    readxl,
+    writexl,
+    tsibble,
+    imputeTS
+RoxygenNote: 7.3.2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
