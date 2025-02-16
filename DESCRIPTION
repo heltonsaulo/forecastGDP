@@ -1,5 +1,5 @@
 Package: forecastGDP
-Title: Pacote para previsão do PIB
+Title: Pacote para previsão do PIB-GO
 Version: 0.1.0
 Authors@R: person("Helton Saulo", email = "heltonsaulo@gmail.com", role = c("aut", "cre"))
 Description: Um pacote para previsão do PIB utilizando modelos estatísticos e aprendizado de máquina.

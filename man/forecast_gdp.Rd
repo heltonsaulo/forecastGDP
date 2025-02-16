@@ -7,8 +7,10 @@
 forecast_gdp(
   variavel_forecasting = "y_pib_adjusted.servicos_ajustado",
   horizon = 2,
-  start_year = 2024,
-  start_month = 12,
+  start_date_series = c(2011, 1),
+  start_date_series_diff = c(2011, 2),
+  end_date_series = c(2024, 11),
+  start_date_forecast = c(2024, 12),
   Start_Hor = "2024-12-01",
   Hor = 49,
   InPer = 162,
@@ -34,9 +36,13 @@ forecast_gdp(
 
 \item{horizon}{Horizonte para validação cruzada}
 
-\item{start_year}{Ano inicial para previsão fora da amostra}
+\item{start_date_series}{Ano-mês do início da série}
 
-\item{start_month}{Mês inicial para previsão fora da amostra}
+\item{start_date_series_diff}{Ano-mês do início da série}
+
+\item{end_date_series}{Ano-mês do fim da série}
+
+\item{start_date_forecast}{Ano-mês para para início da previsão fora da amostra}
 
 \item{models}{Vetor com os modelos de previsão a serem considerados}
 

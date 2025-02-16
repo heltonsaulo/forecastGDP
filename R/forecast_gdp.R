@@ -4,8 +4,10 @@
 #'
 #' @param variavel_forecasting Variável de interesse para previsão
 #' @param horizon Horizonte para validação cruzada
-#' @param start_year Ano inicial para previsão fora da amostra
-#' @param start_month Mês inicial para previsão fora da amostra
+#' @param start_date_series Ano-mês do início da série
+#' @param start_date_series_diff Ano-mês do início da série
+#' @param end_date_series Ano-mês do fim da série
+#' @param start_date_forecast Ano-mês para para início da previsão fora da amostra
 #' @param models Vetor com os modelos de previsão a serem considerados
 #' @param seed Número da semente para reprodutibilidade
 #' @param regularization Booleano para usar regularização via LASSO
@@ -23,8 +25,10 @@
 
 forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustado", # variável de interesse
                          horizon = 2,  # horizonte para validação cruzada
-                         start_year = 2024, # ano para para início da previsão fora da amostra
-                         start_month = 12,  # mês para início da previsão fora da amostra
+                         start_date_series = c(2011, 1), # ano-mês do início da série
+                         start_date_series_diff = c(2011, 2), # ano-mês do início da série
+                         end_date_series  = c(2024, 11), # ano-mês do fim da série
+                         start_date_forecast = c(2024, 12), # ano-mês para para início da previsão fora da amostra
                          Start_Hor = '2024-12-01', ## inicio previsão no formato data
                           Hor = 49, # passos para previsão fora da amostra
                           InPer =  162, ## inicio da validação cruzada na amostra
@@ -90,7 +94,6 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
   library(seasonal)
 
 
-
   # Carregar funções
   source("source_functions_final.R")
   source("source_prints_final.R")
@@ -98,27 +101,27 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
   # Definir séries de resposta
   responses_series_level <- cbind(y_non_seasonal_ts, y_seasonal_adjusted_ts)
   colnames(responses_series_level) <- c(colnames(y_non_seasonal_ts), colnames(y_seasonal_adjusted_ts))
-  responses_series_level <- as.data.frame(window(responses_series_level, start = c(2011, 1), end = c(2024, 11)))
+  responses_series_level <- as.data.frame(window(responses_series_level, start = start_date_series, end = end_date_series))
 
   # Processar variáveis dependentes
   y_non_seasonal_diff_ts <- apply(y_non_seasonal_ts, 2, diff)
-  y_non_seasonal_diff_ts <- ts(y_non_seasonal_diff_ts, start = c(2011, 2), frequency = 12)
+  y_non_seasonal_diff_ts <- ts(y_non_seasonal_diff_ts, start = start_date_series_diff, frequency = 12)
   y_seasonal_adjusted_diff_ts <- apply(y_seasonal_adjusted_ts, 2, diff)
-  y_seasonal_adjusted_diff_ts <- ts(y_seasonal_adjusted_diff_ts, start = c(2011, 2), frequency = 12)
+  y_seasonal_adjusted_diff_ts <- ts(y_seasonal_adjusted_diff_ts, start = start_date_series_diff, frequency = 12)
 
   dependent_variables_ts <- cbind(y_non_seasonal_diff_ts, y_seasonal_adjusted_diff_ts)
   colnames(dependent_variables_ts) <- c(colnames(y_non_seasonal_diff_ts), colnames(y_seasonal_adjusted_diff_ts))
-  dependent_variables_ts <- window(dependent_variables_ts, start = c(2011, 2), end = c(2024, 11))
+  dependent_variables_ts <- window(dependent_variables_ts, start = start_date_series_diff, end = end_date_series)
 
   # Processar covariáveis
   covariates_ts <- covariates_ts[,which(colnames(covariates_ts) %in% names_covariates)]
   covariates_ts <- na.kalman(covariates_ts, model = "auto.arima")
-  covariates_diff_ts <- ts(apply(covariates_ts, 2, diff), start = c(2011, 2), frequency = 12)
-  covariates_Train_ts <- window(covariates_diff_ts, end = c(2024, 11))
-  covariates_Test_ts  <- window(covariates_diff_ts, start = c(2024, 12))
+  covariates_diff_ts <- ts(apply(covariates_ts, 2, diff), start = start_date_series_diff, frequency = 12)
+  covariates_Train_ts <- window(covariates_diff_ts, end = end_date_series)
+  covariates_Test_ts  <- window(covariates_diff_ts, start = start_date_forecast)
 
   # Definir variável de previsão
-  pib_go_ts <- ts(dependent_variables_ts[, variavel_forecasting], start = c(2011, 2), frequency = 12)
+  pib_go_ts <- ts(dependent_variables_ts[, variavel_forecasting], start = start_date_series_diff, frequency = 12)
 
   # Realizar cross-validation
   CV_results <- list()
@@ -201,8 +204,8 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
   df_bests_forecasts <- data.frame(Data=date,as.data.frame(final_forecast))
 
   PIB_TS <- ts(responses_series_level[,which(colnames(responses_series_level)==variavel_forecasting)],
-                 start=c(2011,1), frequency = 12)
-  PIB_HIST <- window(PIB_TS, start=c(2023,01), end=c(2024,11))
+                 start=start_date_series, frequency = 12)
+  PIB_HIST <- window(PIB_TS, start=c(2023, 1), end=end_date_series)
   PC_VL <- as.data.frame(rbind(matrix(rep(PIB_HIST,length(ordered_models)),length(PIB_HIST),length(ordered_models)),
                                 as.matrix(as.data.frame(final_forecast))))
 
