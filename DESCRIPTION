@@ -6,18 +6,16 @@ Description: Um pacote para previsão do PIB utilizando modelos estatísticos e 
 License: MIT
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.5)
 Imports:
-    dplyr,
     forecast,
-    glmnet,
     caret,
     nnfor,
+    glmnet,
     WaveletArima,
+    dplyr,
     readxl,
-    writexl,
     tsibble,
-    imputeTS
+    imputeTS,
+    writexl
 RoxygenNote: 7.3.2
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3

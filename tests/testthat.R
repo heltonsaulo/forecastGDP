@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(forecastPIB)
+library(forecastGDP)
 
-test_check("forecastPIB")
+test_check("forecastGDP")
