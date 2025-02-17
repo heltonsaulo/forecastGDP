@@ -17,5 +17,9 @@ Imports:
     readxl,
     tsibble,
     imputeTS,
-    writexl
+    writexl,
+    testthat,
+    tidyverse,
+    OOS,
+    seasonal
 RoxygenNote: 7.3.2

@@ -14,7 +14,7 @@
 #' @return Lista contendo previsões acumuladas e índices
 #' @export
 #' @examples
-#' forecast_pib("y_pib_adjusted.servicos_ajustado", horizon = 2, start_year = 2024, start_month = 12)
+#' forecast_gdp("y_pib_adjusted.servicos_ajustado", horizon = 2)
 
 
 forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustado", # variável de interesse

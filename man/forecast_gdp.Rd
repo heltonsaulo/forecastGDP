@@ -57,5 +57,5 @@ Lista contendo previsões acumuladas e índices
 Esta função realiza previsões do PIB utilizando diferentes modelos estatísticos.
 }
 \examples{
-forecast_pib("y_pib_adjusted.servicos_ajustado", horizon = 2, start_year = 2024, start_month = 12)
+forecast_gdp("y_pib_adjusted.servicos_ajustado", horizon = 2)
 }
