@@ -149,11 +149,7 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
   # Calcular MAE para ordenar modelos
   MAE_results <- sapply(CV_results, function(cv) mean(abs(cv), na.rm = TRUE))
   ordered_models <- names(sort(MAE_results, na.last = TRUE))
-  } else{
-
-  ordered_models <- models
-
-  }
+  } else{ ordered_models <- models }
 
 
   # Gerar previsão com o melhor modelo
