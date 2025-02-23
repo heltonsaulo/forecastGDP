@@ -87,7 +87,7 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
   library(caret)
   library(OOS)
   require(writexl)
-  library(seasonal)
+  library(prophet)
 
 
   # Carregar funções
