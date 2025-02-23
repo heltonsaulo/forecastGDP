@@ -21,5 +21,6 @@ Imports:
     testthat,
     tidyverse,
     OOS,
-    seasonal
+    seasonal,
+    prophet
 RoxygenNote: 7.3.2

@@ -14,9 +14,10 @@ forecast_gdp(
   Start_Hor = "2024-12-01",
   Hor = 49,
   InPer = 162,
-  models = c("arima", "ets", "bats", "tbats", "elm", "wavelet", "lasso", "sarimax",
-    "gbm", "xgboost", "rf", "pcr", "mars", "hybrid"),
+  models = c("sarima", "ets", "bats", "tbats", "prophet", "elm", "wavelet", "lasso",
+    "sarimax", "gbm", "xgboost", "rf", "pcr", "mars", "hybrid"),
   seed = 1117527352,
+  cross_validation = TRUE,
   regularization = TRUE,
   pib_goias_mensal_agro_ind_serv = pib_goias_mensal_agro_ind_serv,
   covariates_ts = covariates_ts,
@@ -47,6 +48,8 @@ forecast_gdp(
 \item{models}{Vetor com os modelos de previsão a serem considerados}
 
 \item{seed}{Número da semente para reprodutibilidade}
+
+\item{cross_validation}{Implementar validação cruzada}
 
 \item{regularization}{Booleano para usar regularização via LASSO}
 }
