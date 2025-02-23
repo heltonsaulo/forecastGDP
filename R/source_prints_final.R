@@ -4,7 +4,7 @@
 ################################################################################
 ################################################################################
 
-f_print_prophet <- function(pib_go_ts,
+f_print_prophet  <- function(pib_go_ts,
                            Hor,
                            Start_Hor,
                            responses_series_level,
