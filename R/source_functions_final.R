@@ -7,7 +7,45 @@
 ################################################################################
 ################################################################################
 
-f_arima <- function(y, h, seed){
+f_prophet <- function(y, h, seed){
+
+dates <- seq(as.Date(paste(start(y)[1], paste0(start(y)[2],"-01"), sep = "-")),
+             as.Date(paste(end(y)[1], paste0(end(y)[2],"-01"), sep = "-")),
+             by = "month")
+
+df <- data.frame(
+  ds = dates,
+  y = y
+)
+
+m <- prophet(df,
+            yearly.seasonality = TRUE,  # Enable yearly seasonality
+            weekly.seasonality = FALSE,  # Enable weekly seasonality
+            daily.seasonality = FALSE)  # Disable daily seasonality for this example
+
+# Create future dataframe for predictions
+future <- make_future_dataframe(m, freq = "month", periods = h)
+
+# Make predictions
+forecast_prophet <- predict(m, future)
+
+# Predictions
+aa <- forecast::meanf(forecast_prophet$yhat[(length(dates)+1):length(future$ds)],h=h)
+aa$mean <- forecast_prophet$yhat[(length(dates)+1):length(future$ds)]
+aa$lower[,1] <- NA
+aa$lower[,2] <- NA
+aa$upper[,1] <- NA
+aa$upper[,2] <- NA
+aa
+}
+
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+f_sarima <- function(y, h, seed){
     fit = forecast::auto.arima(y)
 forecast::forecast(fit, h)
 }
@@ -87,22 +125,22 @@ forecast::forecast(fit, h)
 ################################################################################
 
 f_elm <- function(y, h, xreg, newxreg, seed, regularization = TRUE){
-set.seed(seed) 
+set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
 #print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
-if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc] 
+if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
 print(namesCoef)
 
-X_reg_train <- as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])) 
+X_reg_train <- as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))]))
 X_reg_test <- as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))]))
 
 nnfor::elm(y, xreg = X_reg_train) %>%
-     forecast::forecast(h=h, xreg=  rbind(X_reg_train,X_reg_test)) 
+     forecast::forecast(h=h, xreg=  rbind(X_reg_train,X_reg_test))
 
 }
 
@@ -134,7 +172,7 @@ aa
 f_lasso <- function(y, h, xreg, newxreg, seed){
 set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 lassoPred <- predict(lassoFit, newx = model.matrix(~.-1,data=newxreg),s = lassoFit$lambda.min)
 aa <- forecast::meanf(as.vector(lassoPred),h=h)
 aa$mean <- as.vector(lassoPred)
@@ -155,18 +193,18 @@ aa
 f_sarimax <- function(y, h, xreg, newxreg, seed, regularization = TRUE){
 set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
 #print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
-if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc] 
+if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
 print(namesCoef)
-  
-  
+
+
 forecast::auto.arima(y, xreg = as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])) ) %>%
-    forecast::forecast(h=h, xreg= as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))]))) 
+    forecast::forecast(h=h, xreg= as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))])))
 
 ## Covariáveis com componentes harmônicos de Fourier
 # X_reg_train_harmonic <- as.matrix(as.data.frame( cbind(xreg[,which(colnames(xreg)%in% c(namesCoef))],fourier(y, K = 6))  ) )
@@ -175,7 +213,7 @@ forecast::auto.arima(y, xreg = as.matrix(as.data.frame(xreg[,which(colnames(xreg
 # colnames(X_reg_test_harmonic) <-  c(colnames(xreg[,which(colnames(xreg)%in% c(namesCoef))]), colnames(fourier(y, K = 6)))
 
 #forecast::auto.arima(y, xreg = X_reg_train_harmonic ) %>%
-#  forecast::forecast(h=h, xreg = X_reg_test_harmonic ) 
+#  forecast::forecast(h=h, xreg = X_reg_test_harmonic )
 
 
 
@@ -191,15 +229,15 @@ forecast::auto.arima(y, xreg = as.matrix(as.data.frame(xreg[,which(colnames(xreg
 
 f_gbm <- function(y, h, xreg, newxreg, seed, regularization = TRUE){
 
-set.seed(seed) 
+set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
 #print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
-if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc] 
+if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
 print(namesCoef)
 
 # Define trainControl with cross-validation
@@ -222,8 +260,8 @@ tuneGrid <- expand.grid(
 
 set.seed(seed)
 gbmFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])),
-                        y=as.vector(y), 
-                        method = "gbm", 
+                        y=as.vector(y),
+                        method = "gbm",
                         trControl = trControl,
                         tuneGrid = tuneGrid,
                         verbose = FALSE)
@@ -246,15 +284,15 @@ aa
 
 f_xgboost <- function(y, h, xreg, newxreg, seed, regularization = TRUE){
 
-set.seed(seed) 
+set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
 #print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
-if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc] 
+if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
 print(namesCoef)
 
 # # Define trainControl with cross-validation
@@ -264,7 +302,7 @@ print(namesCoef)
 #   verboseIter = FALSE,           # Show progress during training
 #   search = "grid"              # Use grid search for tuning
 # )
-# 
+#
 # ## Define a custom grid (tuneGrid) to tune (hyperparameters)
 # tuneGrid <- expand.grid(
 #   nrounds = c(50, 100, 150),           # Number of boosting iterations
@@ -287,8 +325,8 @@ tuneGrid <- NULL  # caret automatically samples random combinations
 
 set.seed(seed)
 xgboostFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])),
-                        y=as.vector(y), 
-                        method = "xgbTree", 
+                        y=as.vector(y),
+                        method = "xgbTree",
                         trControl = trControl,
                         tuneGrid = tuneGrid,
                         verbose = FALSE,
@@ -314,15 +352,15 @@ aa
 
 f_rf <- function(y, h, xreg, newxreg, seed, regularization = TRUE){
 
-set.seed(seed) 
+set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
 #print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
-if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc] 
+if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
 print(namesCoef)
 
 
@@ -341,7 +379,7 @@ tuneGrid <- expand.grid(
 
 set.seed(seed)
 rfFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])),
-                      y=as.vector(y), 
+                      y=as.vector(y),
                       method = "rf",
                       trControl = trControl,   # Training control
                      tuneGrid = tuneGrid     # Tuning grid
@@ -378,7 +416,7 @@ tuneGrid <- expand.grid(
 
 set.seed(seed)
 pcrFit <- caret::train(x=as.matrix(as.data.frame(xreg)),
-                        y=as.vector(y), 
+                        y=as.vector(y),
                         method = "pcr",
                         trControl = trControl,   # Training control settings
                         tuneGrid = tuneGrid      # Grid of `ncomp` values))
@@ -403,15 +441,15 @@ aa
 
 f_mars <- function(y, h, xreg, newxreg, seed, regularization = TRUE){
 
-set.seed(seed) 
+set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
 #print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
-if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc] 
+if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
 print(namesCoef)
 
 
@@ -427,7 +465,7 @@ tuneGrid <- expand.grid(
 
 set.seed(seed)
 bmarsgcvFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])),
-                        y=as.vector(y), 
+                        y=as.vector(y),
                         method = "bagEarthGCV",
                         tuneGrid = tuneGrid,
                         trControl = trControl)
@@ -451,14 +489,14 @@ bmarsgcvaa
 
 f_hybrid <- function(y, h, xreg, newxreg, seed, regularization = TRUE){
 
-  ## bats  
+  ## bats
 batsaa <- forecast::bats(y) %>% forecast::forecast(h=h)
 
-## tbats  
+## tbats
 tbatsaa <- forecast::tbats(y) %>% forecast::forecast(h=h)
 
-## snaive  
-snaiveaa <- forecast::snaive(y, h=h) 
+## snaive
+snaiveaa <- forecast::snaive(y, h=h)
 
 ## Arima
 arimaaa = forecast::auto.arima(y) %>% forecast::forecast(h)
@@ -478,11 +516,42 @@ waveletarimaaa$upper[,1] <- NA
 waveletarimaaa$upper[,2] <- NA
 
 
+## facebook prophet
+dates <- seq(as.Date(paste(start(y)[1], paste0(start(y)[2],"-01"), sep = "-")),
+             as.Date(paste(end(y)[1], paste0(end(y)[2],"-01"), sep = "-")),
+             by = "month")
+
+df <- data.frame(
+  ds = dates,
+  y = y
+)
+
+m <- prophet(df,
+            yearly.seasonality = TRUE,  # Enable yearly seasonality
+            weekly.seasonality = FALSE,  # Enable weekly seasonality
+            daily.seasonality = FALSE)  # Disable daily seasonality for this example
+
+# Create future dataframe for predictions
+future <- make_future_dataframe(m, freq = "month", periods = h)
+
+# Make predictions
+forecast_prophet <- predict(m, future)
+
+# Predictions
+aaprophet <- forecast::meanf(forecast_prophet$yhat[(length(dates)+1):length(future$ds)],h=h)
+aaprophet$mean <- forecast_prophet$yhat[(length(dates)+1):length(future$ds)]
+aaprophet$lower[,1] <- NA
+aaprophet$lower[,2] <- NA
+aaprophet$upper[,1] <- NA
+aaprophet$upper[,2] <- NA
+
+
+
 
 ## Lasso
 set.seed(seed)
 lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), family="gaussian", intercept = FALSE,
-                                alpha =1) 
+                                alpha =1)
 lassoPred <- predict(lassoFit, newx = model.matrix(~.-1,data=newxreg),s = lassoFit$lambda.min)
 lassoaa <- forecast::meanf(as.vector(lassoPred),h=h)
 lassoaa$mean <- as.vector(lassoPred)
@@ -498,7 +567,7 @@ namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lamb
 #print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
-if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc] 
+if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
 print(namesCoef)
 
 
@@ -506,12 +575,12 @@ print(namesCoef)
 X_reg_train <- as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))]))
 X_reg_test <- as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))]))
 elmaa <- nnfor::elm(y, xreg = X_reg_train) %>%
-     forecast::forecast(h=h, xreg=  rbind(X_reg_train,X_reg_test)) 
+     forecast::forecast(h=h, xreg=  rbind(X_reg_train,X_reg_test))
 
 
 ## sarima-lasso
 sarimalassoaa <- forecast::auto.arima(y, xreg = as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])) ) %>%
-    forecast::forecast(h=h, xreg= as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))]))) 
+    forecast::forecast(h=h, xreg= as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))])))
 
 
 
@@ -538,8 +607,8 @@ tuneGrid <- expand.grid(
 
 set.seed(seed)
 gbmFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])),
-                       y=as.vector(y), 
-                       method = "gbm", 
+                       y=as.vector(y),
+                       method = "gbm",
                        trControl = trControl,
                        tuneGrid = tuneGrid,
                        verbose = FALSE)
@@ -565,7 +634,7 @@ gbmaa$upper[,2] <- NA
 #   verboseIter = FALSE,           # Show progress during training
 #   search = "grid"              # Use grid search for tuning
 # )
-# 
+#
 # ## Define a custom grid (tuneGrid) to tune (hyperparameters)
 # tuneGrid <- expand.grid(
 #   nrounds = c(50, 100, 150),           # Number of boosting iterations
@@ -588,8 +657,8 @@ tuneGrid <- NULL  # caret automatically samples random combinations
 
 set.seed(seed)
 xgboostFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])),
-                        y=as.vector(y), 
-                        method = "xgbTree", 
+                        y=as.vector(y),
+                        method = "xgbTree",
                         trControl = trControl,
                         tuneGrid = tuneGrid,
                         verbose = FALSE,
@@ -631,7 +700,7 @@ rfFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c
                       trControl = trControl,   # Training control
                      tuneGrid = tuneGrid     # Tuning grid
                       )
-                      
+
 rfPred <- predict(rfFit, newdata = as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))])))
 rfaa <- forecast::meanf(as.vector(rfPred),h=h)
 rfaa$mean <- as.vector(rfPred)
@@ -656,7 +725,7 @@ tuneGrid <- expand.grid(
 
 set.seed(seed)
 pcrFit <- caret::train(x=as.matrix(as.data.frame(xreg)),
-                       y=as.vector(y), 
+                       y=as.vector(y),
                        method = "pcr",
                        trControl = trControl,   # Training control settings
                        tuneGrid = tuneGrid      # Grid of `ncomp` values)))
@@ -685,7 +754,7 @@ tuneGrid <- expand.grid(
 
 set.seed(seed)
 bmarsgcvFit <- caret::train(x=as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])),
-                        y=as.vector(y), 
+                        y=as.vector(y),
                         method = "bagEarthGCV",
                         tuneGrid = tuneGrid,
                         trControl = trControl)
@@ -705,27 +774,29 @@ bmarsgcvaa
 #  start=c(start(arimaaa$mean)[1],start(arimaaa$mean)[2]),
 #  end=c(end(arimaaa$mean)[1],end(arimaaa$mean)[2])))
 
-date = seq.Date(from = as.Date('2024-05-01'), by = 'month', length.out = h)
+date = seq.Date(from = as.Date('2024-12-01'), by = 'month', length.out = h)
 
+D_prophet = data.frame(date, forecast.date=NA, model = "prophet", forecast = as.vector(aaprophet$mean), se=NA, observed =NA)
 D_bats = data.frame(date, forecast.date=NA, model = "bats", forecast = as.vector(batsaa$mean), se=NA, observed =NA)
 D_tbats = data.frame(date, forecast.date=NA, model = "tbats", forecast = as.vector(tbatsaa$mean), se=NA, observed =NA)
 D_sarima = data.frame(date, forecast.date=NA, model = "sarima", forecast = as.vector(arimaaa$mean), se=NA, observed =NA)
 D_ets = data.frame(date, forecast.date=NA, model = "ets", forecast = as.vector(etsaa$mean), se=NA, observed = NA)
-D_waveletarima = data.frame(date, forecast.date=NA, model = "sarima", forecast = as.vector(waveletarimaaa$mean), se=NA, observed =NA)
+D_wavelet = data.frame(date, forecast.date=NA, model = "wavelet", forecast = as.vector(waveletarimaaa$mean), se=NA, observed =NA)
 D_lasso  = data.frame(date, forecast.date=NA,model = "lasso", forecast = as.vector(lassoaa$mean), se=NA,observed =NA)
 D_elm = data.frame(date, forecast.date=NA, model = "elm", forecast = as.vector(elmaa$mean), se=NA, observed =NA)
-D_sarimalasso  = data.frame(date, forecast.date=NA,model = "sarimalasso", forecast = as.vector(sarimalassoaa$mean), se=NA,observed = NA)
+D_sarimax  = data.frame(date, forecast.date=NA,model = "sarimax", forecast = as.vector(sarimalassoaa$mean), se=NA,observed = NA)
 D_gbm  = data.frame(date, forecast.date=NA,model = "gbm", forecast = as.vector(gbmaa$mean), se=NA,observed = NA)
 D_xgboost  = data.frame(date, forecast.date=NA,model = "xgboost", forecast = as.vector(xgboostaa$mean), se=NA,observed = NA)
 D_rf  = data.frame(date, forecast.date=NA,model = "rf", forecast = as.vector(rfaa$mean), se=NA,observed = NA)
 D_pcr  = data.frame(date, forecast.date=NA,model = "pcr", forecast = as.vector(pcraa$mean), se=NA,observed = NA)
-D_bagged_mars_gcv  = data.frame(date, forecast.date=NA,model = "bagged_mars_gcv", forecast = as.vector(bmarsgcvaa$mean), se=NA,observed = NA)
+D_mars  = data.frame(date, forecast.date=NA,model = "mars", forecast = as.vector(bmarsgcvaa$mean), se=NA,observed = NA)
 
 
-D_forecasts_all <- rbind.data.frame(D_bats,D_tbats,
-                                    D_sarima,D_ets,D_waveletarima,D_lasso,D_elm,
-                                    D_sarimalasso,D_gbm,D_xgboost,D_rf,D_pcr,
-                                    D_bagged_mars_gcv)
+D_forecasts_all <- rbind.data.frame(D_prophet,
+                                    D_bats,D_tbats,
+                                    D_sarima,D_ets,D_wavelet,D_lasso,D_elm,
+                                    D_sarimax,D_gbm,D_xgboost,D_rf,D_pcr,
+                                    D_mars)
  # combine forecasts
 # combinations_all  =
 #    OOS::forecast_combine(
@@ -737,7 +808,7 @@ combinations_all <- D_forecasts_all %>%
   group_by(date)  %>%
   summarise(mean_forecast = mean(forecast))
 
- 
+
 hybridaa <- forecast::meanf(as.vector(combinations_all$mean_forecast),h=h)
 hybridaa$mean <- as.vector(combinations_all$mean_forecast)
 hybridaa$lower[,1] <- NA
@@ -745,8 +816,8 @@ hybridaa$lower[,2] <- NA
 hybridaa$upper[,1] <- NA
 hybridaa$upper[,2] <- NA
 
-return(hybridaa)  
-}  
+return(hybridaa)
+}
 
 
 

@@ -10,6 +10,7 @@
 #' @param start_date_forecast Ano-mês para para início da previsão fora da amostra
 #' @param models Vetor com os modelos de previsão a serem considerados
 #' @param seed Número da semente para reprodutibilidade
+#' @param cross_validation Implementar validação cruzada
 #' @param regularization Booleano para usar regularização via LASSO
 #' @return Lista contendo previsões acumuladas e índices
 #' @export
@@ -26,10 +27,11 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
                          Start_Hor = '2024-12-01', ## inicio previsão no formato data
                           Hor = 49, # passos para previsão fora da amostra
                           InPer =  162, ## inicio da validação cruzada na amostra
-                         models = c("arima", "ets", "bats", "tbats", "elm", "wavelet", "lasso",
+                         models = c("sarima", "ets", "bats", "tbats", "prophet", "elm", "wavelet", "lasso",
                                     "sarimax", "gbm", "xgboost", "rf", "pcr",
                                     "mars", "hybrid"),  # modelos considerados
                          seed = 1117527352, # semente
+                         cross_validation = TRUE, ## implementar validação cruzada
                           regularization = TRUE, ## selecionar covariáveis via lasso
                          pib_goias_mensal_agro_ind_serv = pib_goias_mensal_agro_ind_serv, ## banco completo
                          covariates_ts = covariates_ts, # covariáveis
@@ -117,19 +119,17 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
   # Definir variável de previsão
   pib_go_ts <- ts(dependent_variables_ts[, variavel_forecasting], start = start_date_series_diff, frequency = 12)
 
+
+  # Loop cross-validation (TRUE or FALSE)
+  if(cross_validation == TRUE) {
+
   # Realizar cross-validation
   CV_results <- list()
-
-
-  c("arima", "ets", "bats", "tbats", "elm", "wavelet", "lasso",
-                                    "sarimax", "gbm", "xgboost", "rf", "pcr",
-                                    "mars", "hybrid")
-
 
   for (model in models) {
     forecast_func <- get(paste0("f_", model))
 
-    if(model %in% c("arima", "ets", "bats", "tbats", "elm", "wavelet")){
+    if(model %in% c("sarima", "ets", "bats", "tbats", "elm", "prophet", "wavelet")){
 
        CV_results[[model]] <- tsCV(y = pib_go_ts, forecastfunction = forecast_func, h = horizon,
                                    initial = InPer, seed = seed)
@@ -149,6 +149,11 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
   # Calcular MAE para ordenar modelos
   MAE_results <- sapply(CV_results, function(cv) mean(abs(cv), na.rm = TRUE))
   ordered_models <- names(sort(MAE_results, na.last = TRUE))
+  } else{
+
+  ordered_models <- models
+
+  }
 
 
   # Gerar previsão com o melhor modelo
@@ -156,7 +161,7 @@ forecast_gdp <- function(variavel_forecasting = "y_pib_adjusted.servicos_ajustad
 
   for (model in ordered_models) {
   forecast_func <- get(paste0("f_print_", model))
-  if(model %in% c("arima", "ets", "bats", "tbats", "elm", "wavelet")){
+  if(model %in% c("sarima", "ets", "bats", "tbats", "elm", "prophet", "wavelet")){
     final_forecast[[model]] <- modelType_forecasts(
                                        pib_go_ts=pib_go_ts,
                                        Hor=Hor,
