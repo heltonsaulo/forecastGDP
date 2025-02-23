@@ -25,7 +25,7 @@ m <- prophet::prophet(df,
             daily.seasonality = FALSE)  # Disable daily seasonality for this example
 
 # Create future dataframe for predictions
-future <- make_future_dataframe(m, freq = "month", periods = Hor)
+future <- prophet::make_future_dataframe(m, freq = "month", periods = Hor)
 
 # Make predictions
 forecast_prophet <- predict(m, future)
@@ -919,7 +919,7 @@ m <- prophet::prophet(df,
             daily.seasonality = FALSE)  # Disable daily seasonality for this example
 
 # Create future dataframe for predictions
-future <- make_future_dataframe(m, freq = "month", periods = Hor)
+future <- prophet::make_future_dataframe(m, freq = "month", periods = Hor)
 
 # Make predictions
 forecast_prophet <- predict(m, future)
