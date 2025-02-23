@@ -19,7 +19,7 @@ df <- data.frame(
   y = pib_go_ts
 )
 
-m <- prophet(df,
+m <- prophet::prophet(df,
             yearly.seasonality = TRUE,  # Enable yearly seasonality
             weekly.seasonality = FALSE,  # Enable weekly seasonality
             daily.seasonality = FALSE)  # Disable daily seasonality for this example
@@ -913,7 +913,7 @@ df <- data.frame(
   y = pib_go_ts
 )
 
-m <- prophet(df,
+m <- prophet::prophet(df,
             yearly.seasonality = TRUE,  # Enable yearly seasonality
             weekly.seasonality = FALSE,  # Enable weekly seasonality
             daily.seasonality = FALSE)  # Disable daily seasonality for this example
