@@ -21,6 +21,20 @@ covariates_remove_seas_forecast <- function(dfts, start_year = 2011, start_perio
   library(seasonal)
   library(tsibble)
   library(tidyverse)
+  library(imputeTS)
+
+  ## remover apenas últimos NAs
+  remove_trailing_nas <- function(series) {
+  na_positions <- which(is.na(series))  # Identifica posições de NA
+
+  if (length(na_positions) == 0) {
+    return(series)  # Retorna a série original se não houver NAs
+  }
+
+  last_non_na <- max(which(!is.na(series)))  # Última posição com um valor válido
+  clean_series <- series[1:last_non_na]  # Mantém apenas os valores até essa posição
+  return(clean_series)
+  }
 
   # Cálculo do total de períodos
    total_periods <- (end_year - start_year) * 12 + (end_period - start_period + 1)
@@ -58,15 +72,17 @@ covariates_remove_seas_forecast <- function(dfts, start_year = 2011, start_perio
 
     if (is_dichotomous[col]) {
       # Se for variável dicotômica, apenas preencher os h passos com zero
-      series_ts <- df[[col]]
-      series_ts <- series_ts[!is.na(series_ts)]
+      series_ts  <- df[[col]]
+      series_ts  <- remove_trailing_nas(series_ts)
+      #series_ts  <- ts(series_ts, start = c(start_year, start_period), frequency = 12)
+      #series_ts  <- imputeTS::na.kalman(series_ts, model = "auto.arima")
       serie_estendida <- c(as.vector(series_ts), rep(0,total_periods-length(series_ts)))
     } else {
-      # Converte a coluna em objeto ts (supondo frequência mensal), remove NA
-      series_ts <- df[[col]]
-      series_ts <- series_ts[!is.na(series_ts)]
-      series_ts <- ts(series_ts, start = c(start_year, start_period), frequency = 12)
-
+      # Converte a coluna em objeto ts (supondo frequência mensal), remove NA, e faz imputação
+      series_ts  <- df[[col]]
+      series_ts <- remove_trailing_nas(series_ts)
+      series_ts  <- ts(series_ts, start = c(start_year, start_period), frequency = 12)
+      series_ts  <- imputeTS::na.kalman(series_ts, model = "auto.arima")
       # Remover sazonalidade
       serie_ajustada <- final(seasonal::seas(series_ts, outlier = NULL, automdl = NULL))
 
