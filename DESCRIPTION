@@ -2,7 +2,7 @@ Package: forecastGDP
 Title: Pacote para previsão do PIB-GO
 Version: 0.1.0
 Authors@R: person("Helton Saulo", email = "heltonsaulo@gmail.com", role = c("aut", "cre"))
-Description: Um pacote para previsão do PIB utilizando modelos estatísticos e aprendizado de máquina.
+Description: Um pacote para previsão do PIB utilizando modelos clássicos de séries temporais e de aprendizado de máquina.
 License: MIT
 Encoding: UTF-8
 LazyData: true
@@ -22,5 +22,8 @@ Imports:
     tidyverse,
     OOS,
     seasonal,
-    prophet
+    prophet,
+    seasonal,
+    tsibble
 RoxygenNote: 7.3.2
+Config/testthat/edition: 3
