@@ -322,7 +322,7 @@ forecast_gdp <- function(variavel_forecasting = "ajustado_servicos", # variável
   ################################################
   # Covariáveis escolhidas por LASSO
   ################################################
-
+   set.seed(seed)
    lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=as.vector(pib_go_ts), family="gaussian",
                                intercept = FALSE,
                                 alpha =1)
