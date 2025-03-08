@@ -19,6 +19,12 @@ responses_remove_seas_forecast <- function(dfts,
                                            end_year     = 2028,
                                            end_period   = 12) {
 
+   # Pacotes
+  library(forecast)
+  library(seasonal)
+  library(tsibble)
+  library(tidyverse)
+
   ## Função auxiliar: Remover apenas os NAs finais
   remove_trailing_nas <- function(series) {
     na_positions <- which(is.na(series))  # Identifica posições de NA
