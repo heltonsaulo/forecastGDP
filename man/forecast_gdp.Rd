@@ -2,27 +2,28 @@
 % Please edit documentation in R/forecast_gdp.R
 \name{forecast_gdp}
 \alias{forecast_gdp}
-\title{Previsão do PIB}
+\title{Esta função realiza previsões do PIB/Inflação utilizando diversos modelos estatísticos e de aprendizado de máquina.}
 \usage{
 forecast_gdp(
-  variavel_forecasting = "y_pib_adjusted.servicos_ajustado",
+  variavel_forecasting = "ajustado_servicos",
+  start_series_year = 2011,
+  start_series_period = 1,
+  end_series_year = 2024,
+  end_series_period = 11,
+  start_forecast_year = 2024,
+  start_forecast_period = 12,
+  end_forecast_year = 2028,
+  end_forecast_period = 12,
   horizon = 2,
-  start_date_series = c(2011, 1),
-  start_date_series_diff = c(2011, 2),
-  end_date_series = c(2024, 11),
-  start_date_forecast = c(2024, 12),
-  Start_Hor = "2024-12-01",
-  Hor = 49,
   InPer = 162,
   models = c("sarima", "ets", "bats", "tbats", "prophet", "elm", "wavelet", "lasso",
     "sarimax", "gbm", "xgboost", "rf", "pcr", "mars", "hybrid"),
   seed = 1117527352,
-  cross_validation = TRUE,
+  cross_validation = FALSE,
   regularization = TRUE,
-  pib_goias_mensal_agro_ind_serv = pib_goias_mensal_agro_ind_serv,
-  covariates_ts = covariates_ts,
-  y_non_seasonal_ts = y_non_seasonal_ts,
-  y_seasonal_adjusted_ts = y_seasonal_adjusted_ts,
+  inflation_forecast = FALSE,
+  covariates_ts = covariates_remove_seas_forecast_ts,
+  responses_ts = responses_remove_seas_forecast_ts,
   names_covariates = c("crise_s", "abcr_leves_ajustado", "pms_servicos_a", "pmc_a",
     "pmc_varejo_amp_a", "transferencias_correntes", "cofins", "iof", "emprego.formal",
     "emprego.agro", "emprego.ind_ext", "emprego.formal_go", "ibcr.go_a", "ibc.br_a",
@@ -33,32 +34,50 @@ forecast_gdp(
 )
 }
 \arguments{
-\item{variavel_forecasting}{Variável de interesse para previsão}
+\item{variavel_forecasting}{Nome da variável de interesse para previsão.}
 
-\item{horizon}{Horizonte para validação cruzada}
+\item{start_series_year}{Ano de início da série temporal.}
 
-\item{start_date_series}{Ano-mês do início da série}
+\item{start_series_period}{Mês de início da série temporal.}
 
-\item{start_date_series_diff}{Ano-mês do início da série}
+\item{end_series_year}{Ano final da série temporal.}
 
-\item{end_date_series}{Ano-mês do fim da série}
+\item{end_series_period}{Mês final da série temporal.}
 
-\item{start_date_forecast}{Ano-mês para para início da previsão fora da amostra}
+\item{start_forecast_year}{Ano de início da previsão.}
 
-\item{models}{Vetor com os modelos de previsão a serem considerados}
+\item{start_forecast_period}{Mês de início da previsão.}
 
-\item{seed}{Número da semente para reprodutibilidade}
+\item{end_forecast_year}{Ano final da previsão.}
 
-\item{cross_validation}{Implementar validação cruzada}
+\item{end_forecast_period}{Mês final da previsão.}
 
-\item{regularization}{Booleano para usar regularização via LASSO}
+\item{horizon}{Horizonte de previsão para validação cruzada.}
+
+\item{InPer}{Número de períodos iniciais utilizados para validação cruzada.}
+
+\item{models}{Modelos a serem considerados para previsão.}
+
+\item{seed}{Semente para reprodutibilidade dos resultados.}
+
+\item{cross_validation}{Indica se a validação cruzada será realizada (TRUE/FALSE).}
+
+\item{regularization}{Indica se a seleção de variáveis será feita via LASSO (TRUE/FALSE).}
+
+\item{inflation_forecast}{Indica se a previsão é para inflação (TRUE/FALSE).}
+
+\item{covariates_ts}{Conjunto de covariáveis para previsão.}
+
+\item{responses_ts}{Conjunto de séries de resposta.}
+
+\item{names_covariates}{Vetor de nomes das covariáveis utilizadas.}
 }
 \value{
-Lista contendo previsões acumuladas e índices
+Lista contendo previsões de crescimento e índices, além das variáveis selecionadas pelo LASSO.
 }
 \description{
-Esta função realiza previsões do PIB utilizando diferentes modelos estatísticos.
+Esta função realiza previsões do PIB/Inflação utilizando diversos modelos estatísticos e de aprendizado de máquina.
 }
 \examples{
-forecast_gdp("y_pib_adjusted.servicos_ajustado", horizon = 2)
+forecast_gdp("ajustado_servicos")
 }

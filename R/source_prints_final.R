@@ -278,11 +278,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=
                                intercept = FALSE,
                                 alpha =1)
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(covariates_Train_ts)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(covariates_Train_ts)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 
@@ -368,10 +368,10 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=
                                 alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 namesCoef <- colnames(covariates_Train_ts)[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 
@@ -419,11 +419,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=
                                intercept = FALSE,
                                 alpha =1)
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(covariates_Train_ts)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(covariates_Train_ts)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 X_reg_train <- as.matrix(as.data.frame(covariates_Train_ts[,which(colnames(covariates_Train_ts)%in% c(namesCoef))]))
@@ -474,11 +474,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=
                                intercept = FALSE,
                                 alpha =1)
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(covariates_Train_ts)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(covariates_Train_ts)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 X_reg_train <- as.matrix(as.data.frame(covariates_Train_ts[,which(colnames(covariates_Train_ts)%in% c(namesCoef))]))
@@ -561,11 +561,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=
                                intercept = FALSE,
                                 alpha =1)
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(covariates_Train_ts)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(covariates_Train_ts)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 X_reg_train <- as.matrix(as.data.frame(covariates_Train_ts[,which(colnames(covariates_Train_ts)%in% c(namesCoef))]))
@@ -656,11 +656,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=
                                intercept = FALSE,
                                 alpha =1)
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(covariates_Train_ts)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(covariates_Train_ts)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 X_reg_train <- as.matrix(as.data.frame(covariates_Train_ts[,which(colnames(covariates_Train_ts)%in% c(namesCoef))]))
@@ -804,11 +804,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=covariates_Train_ts), y=
                                intercept = FALSE,
                                 alpha =1)
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(covariates_Train_ts)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(covariates_Train_ts)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 
@@ -950,11 +950,11 @@ lassoaa$upper[,2] <- NA
 
 ## covariates
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(covariates_Train_ts)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(covariates_Train_ts)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 X_reg_train <- as.matrix(as.data.frame(covariates_Train_ts[,which(colnames(covariates_Train_ts)%in% c(namesCoef))]))
 X_reg_test <- as.matrix(as.data.frame(covariates_Test_ts[,which(colnames(covariates_Test_ts)%in% c(namesCoef))]))

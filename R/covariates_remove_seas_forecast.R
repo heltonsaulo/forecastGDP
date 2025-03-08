@@ -2,7 +2,7 @@
 #'
 #' Esta função realiza previsões das covariáveis.
 #'
-#' @title Remove Sazonalidade e Faz Previsão
+#' @title Remove Sazonalidade e Faz Previsão das Covariáveis
 #' @param dfts Um objeto ts contendo covariáveis.
 #' @param start_year Ano inicial da série.
 #' @param start_period Período inicial (mês, se frequência mensal).

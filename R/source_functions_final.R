@@ -130,11 +130,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), f
                                 alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 X_reg_train <- as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))]))
 X_reg_test <- as.matrix(as.data.frame(newxreg[,which(colnames(newxreg)%in% c(namesCoef))]))
@@ -196,11 +196,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), f
                                 alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 forecast::auto.arima(y, xreg = as.matrix(as.data.frame(xreg[,which(colnames(xreg)%in% c(namesCoef))])) ) %>%
@@ -234,11 +234,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), f
                                 alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 # Define trainControl with cross-validation
 trControl <- trainControl(
@@ -289,11 +289,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), f
                                 alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 # # Define trainControl with cross-validation
 # trControl <- trainControl(
@@ -357,11 +357,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), f
                                 alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 trControl <- trainControl(
@@ -446,11 +446,11 @@ lassoFit <-  glmnet::cv.glmnet(x=model.matrix(~.-1,data=xreg), y=as.vector(y), f
                                 alpha =1)
 
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 trControl <- trainControl(
@@ -564,11 +564,11 @@ lassoaa$upper[,2] <- NA
 
 ## covariates
 namesCoef <- rownames(coef(lassoFit, s = 'lambda.min'))[coef(lassoFit, s = 'lambda.min')[,1]!= 0] ### returns nonzero coefs
-#print(namesCoef)
+##print(namesCoef)
 lfc <- as.vector(coef(lassoFit, s = 'lambda.min')[,1]!= 0)[-1]
 if(regularization == TRUE) namesCoef <- colnames(xreg)[lfc]
 if(regularization == FALSE) namesCoef <- colnames(xreg)##[lfc]
-print(namesCoef)
+#print(namesCoef)
 
 
 ## elm

@@ -2,3 +2,4 @@
 
 export(covariates_remove_seas_forecast)
 export(forecast_gdp)
+export(responses_remove_seas_forecast)
