@@ -68,7 +68,7 @@ covariates_remove_seas_forecast <- function(dfts, start_year = 2011, start_perio
 
   # Para cada coluna (série) do dataframe
   for (col in colnames(df)) {
-    #print(col)
+    #print(col) #
 
     if (is_dichotomous[col]) {
       # Se for variável dicotômica, apenas preencher os h passos com zero
