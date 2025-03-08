@@ -87,7 +87,7 @@ covariates_remove_seas_forecast <- function(dfts, start_year = 2011, start_perio
       serie_ajustada <- final(seasonal::seas(series_ts, outlier = NULL, automdl = NULL))
 
       # Inicializa vetor para armazenar o MAE de cada modelo (usando validação cruzada)
-      mae_modelos <- c()
+      mae_modelos <- c()  #
 
       # Para cada modelo, calcula o erro médio absoluto usando tsCV
       for (modelo in names(forecast_functions)) {
