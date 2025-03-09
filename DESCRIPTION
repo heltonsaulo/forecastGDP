@@ -27,3 +27,4 @@ Imports:
     tsibble
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
+GithubUsername: heltonsaulo
