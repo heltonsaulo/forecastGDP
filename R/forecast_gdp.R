@@ -264,7 +264,7 @@ forecast_gdp <- function(variavel_forecasting = "ajustado_servicos", # variável
 
   # salvar xlsx
   write_xlsx(PC_VL_SUM_YEAR, paste0(paste0("crescimento_acumulado_",variavel_forecasting),".xlsx"))
-  write_xlsx(PC_VL, paste0(paste0("indices_",variavel_forecasting),".xlsx"))
+  write_xlsx(PC_VL, paste0(paste0("indices_",variavel_forecasting),".xlsx")) #
   }
 
   if(inflation_forecast == TRUE) {
