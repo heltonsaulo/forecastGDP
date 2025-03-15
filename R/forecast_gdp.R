@@ -272,11 +272,18 @@ forecast_gdp <- function(variavel_forecasting = "ajustado_servicos", # variável
   ## Calcular inflação acumulada
   ################################################
 
+  date = format(seq.Date(from = as.Date(Start_Hor), by = 'month', length.out = Hor), format= "%b %Y")
+  df_bests_forecasts <- data.frame(Data=date,as.data.frame(final_forecast))
+
+  PIB_TS <- ts(responses_series_level[,which(colnames(responses_series_level)==variavel_forecasting)],
+                 start=c(start_series_year, start_series_period), frequency = 12)
+
    r_o_c <- function(x, lag = 1){
      n <- length(x)
      val <-  ((x[(1+lag):n] - x[1:(n-lag)])/x[1:(n-lag)])*100
    return(val)
-  }
+   }
+
 
   PIB_HIST_I <- window(PIB_TS, start=c(2022, 12), end=c(end_series_year, end_series_period))
   PC_VL_I <- as.data.frame(rbind(matrix(rep(PIB_HIST_I,length(ordered_models)),length(PIB_HIST_I),length(ordered_models)),
@@ -310,10 +317,11 @@ forecast_gdp <- function(variavel_forecasting = "ajustado_servicos", # variável
   PC_VL_SUM_YEAR$mes_ano <- format(seq.Date(from = as.Date("2024-01-01"), to = as.Date(End_Hor), by = 'month'), format= "%b %Y")
   PC_VL_SUM_YEAR <- PC_VL_SUM_YEAR[, c("mes_ano", setdiff(names(PC_VL_SUM_YEAR), "mes_ano"))]
 
-  PC_VL$ano <- NULL
-  PC_VL$mes_ano <- format(seq.Date(from = as.Date("2023-01-01"), to = as.Date(End_Hor), by = 'month'), format= "%b %Y")
-  PC_VL <- PC_VL[, c("mes_ano", setdiff(names(PC_VL), "mes_ano"))]
+  PC_VL_I$ano <- NULL
+  PC_VL_I$mes_ano <- format(seq.Date(from = as.Date("2022-12-01"), to = as.Date(End_Hor), by = 'month'), format= "%b %Y")
+  PC_VL_I <- PC_VL_I[, c("mes_ano", setdiff(names(PC_VL_I), "mes_ano"))]
 
+  PC_VL <- PC_VL_I
    # salvar xlsx
   write_xlsx(PC_VL_SUM_YEAR, paste0(paste0("inflacao_acumulada_",variavel_forecasting),".xlsx"))
   write_xlsx(PC_VL_I, paste0(paste0("indices_",variavel_forecasting),".xlsx"))
